@@ -1,49 +1,33 @@
-pipeline{
-
-    agent {
-        docker {
-            image 'maven:3.8.1-adoptopenjdk-11' 
-            args '-v /root/.m2:/root/.m2' 
-        }
+pipeline {
+    environment {
+    registry = "andrewkachmar/adetails"
+    registryCredential = "dockerhub"
+  }
+    agent any
+    tools {
+        maven 'Maven 3.8.1'
+        jdk 'openJDK9'
     }
-
     stages {
-
-        stage ('Compile Stage') {
-
+        stage ('Initialize') {
             steps {
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                '''
+            }
+        }
 
-                withMaven(maven: 'maven_3_5_0') {
-                    sh 'mvn clean install'
-
+        stage ('Build') {
+            steps {
+                sh 'mvn clean package'
+                //sh 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml' 
                 }
-
             }
         }
-    stage ('Test Stage') {
-
-            steps {
-
-                withMaven(maven: 'maven_3_5_0') {
-                    sh 'mvn test'
-
-                }
-
-            }
-        }
-
-
-        stage ('Cucumber Reports') {
-
-            steps {
-                cucumber buildStatus: "UNSTABLE",
-                    fileIncludePattern: "**/cucumber.json",
-                    jsonReportDirectory: 'target'
-
-            }
-
-        }
-
     }
-
 }
