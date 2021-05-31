@@ -14,11 +14,7 @@
       <artifactId>cucumber-java</artifactId>
       <version>6.9.1</version>
 </dependency>
-<dependency>
-    <groupId>com.github.stephenc.monte</groupId>
-    <artifactId>monte-screen-recorder</artifactId>
-    <version>0.7.7.0</version>
-</dependency>
+
   <dependency>
     <groupId>ws.schild</groupId>
     <artifactId>jave-core</artifactId>
